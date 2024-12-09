@@ -10,7 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,9 +33,15 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Application definition
+# Vonage API credentials
+VONAGE_API_KEY = os.getenv('VONAGE_API_KEY')
+VONAGE_API_SECRET = os.getenv('VONAGE_API_SECRET')
+VONAGE_BRAND_NAME = os.getenv('VONAGE_BRAND_NAME')
 
+
+# Application definition
 INSTALLED_APPS = [
+    # Django built-in apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,7 +49,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third party apps
+    # Third-party apps
+    'rest_framework',
+    'corsheaders',
+
+    # Local apps
+    'accounts',
     'sms',
 ]
 
@@ -50,7 +66,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Third party middleware
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+# CORS settings for allowing all origins to access the API endpoints
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CSRF settings for allowing CSRF cookie to be sent over HTTP for development purposes only
+APPEND_SLASH = False
 
 ROOT_URLCONF = 'realchat.urls'
 
