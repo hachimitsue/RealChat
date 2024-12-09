@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
+    <v-card class="mx-auto pa-12 pb-8 mt-15" elevation="8" max-width="448" rounded="lg">
       <div class="text-subtitle-1 text-medium-emphasis">Account</div>
 
       <v-text-field
