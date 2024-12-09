@@ -39,7 +39,7 @@ function onSubmit() {
 
       <v-main>
         <v-container fluid class="d-flex justify-center align-center min-height-100vh">
-          <v-card class="mx-auto" prepend-icon="mdi-account" elevation="10" width="500">
+          <v-card class="mx-auto card" prepend-icon="mdi-account" elevation="10" width="500">
             <!-- Title and Subtitle -->
             <template v-slot:title>
               <span class="font-weight-black">RealChat</span>
@@ -72,3 +72,9 @@ function onSubmit() {
     </v-app>
   </v-responsive>
 </template>
+
+<style>
+.card {
+  margin-top: 100px;
+}
+</style>
