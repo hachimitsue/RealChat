@@ -12,10 +12,4 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  server: {
-    proxy: {
-      '/accounts': 'http://localhost:8000',
-      '/sms': 'http://localhost:8000',
-    },
-  },
 })

@@ -10,16 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-import os
 from pathlib import Path
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -31,13 +25,6 @@ SECRET_KEY = 'django-insecure--d5om7g3y52&t@fbo#gq_uvk5em()!yb)9jt+_gqbvcmn)d%w4
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
-# Vonage API credentials
-VONAGE_API_KEY = os.getenv('VONAGE_API_KEY')
-VONAGE_API_SECRET = os.getenv('VONAGE_API_SECRET')
-VONAGE_BRAND_NAME = os.getenv('VONAGE_BRAND_NAME')
-
 
 # Application definition
 INSTALLED_APPS = [
@@ -55,7 +42,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'accounts',
-    'sms',
+    'sms.apps.SmsServiceConfig',
 ]
 
 MIDDLEWARE = [

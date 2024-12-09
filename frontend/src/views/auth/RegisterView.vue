@@ -1,11 +1,5 @@
 <template>
   <div>
-    <v-img
-      class="mx-auto my-6"
-      max-width="228"
-      src="https://cdn.vuetifyjs.com/docs/images/logos/vuetify-logo-v3-slim-text-light.svg"
-    ></v-img>
-
     <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
       <div class="text-subtitle-1 text-medium-emphasis">Account</div>
 
@@ -21,7 +15,7 @@
 
       <v-text-field
         density="compact"
-        placeholder="Phone number"
+        placeholder="639512200000"
         prepend-inner-icon="mdi-phone-outline"
         variant="outlined"
         v-model="phone_number"
@@ -57,26 +51,28 @@
 
 <script setup>
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
 import axios from 'axios'
 
 const email = ref('')
-const phone_number = ref('')
 const password = ref('')
-const visible = ref(false)
+const phone_number = ref('')
 
 const register = async () => {
   try {
-    const response = await axios.post('/accounts/register/', {
-      email: email.value,
-      phone_number: phone_number.value,
-      password: password.value,
+    const formData = new URLSearchParams()
+    formData.append('email', email.value)
+    formData.append('password', password.value)
+    formData.append('phone_number', phone_number.value)
+
+    const response = await axios.post('http://127.0.0.1:8000/sms/register/', formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     })
-    alert(response.data.message)
+    console.log(response.data)
   } catch (error) {
-    alert('Registration failed: ' + error.response.data)
+    console.error(error)
   }
 }
 </script>
-
 <style></style>
