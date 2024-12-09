@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -27,10 +26,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
 INSTALLED_APPS = [
+    # Django built-in apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,8 +36,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third party apps
-    'sms',
+    # Third-party apps
+    'rest_framework',
+    'corsheaders',
+
+    # Local apps
+    'accounts',
+    'sms.apps.SmsServiceConfig',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +53,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Third party middleware
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+# CORS settings for allowing all origins to access the API endpoints
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CSRF settings for allowing CSRF cookie to be sent over HTTP for development purposes only
+APPEND_SLASH = False
 
 ROOT_URLCONF = 'realchat.urls'
 
