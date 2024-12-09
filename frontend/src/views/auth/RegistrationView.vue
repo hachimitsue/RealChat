@@ -13,7 +13,7 @@
       <v-main>
         <v-container fluid class="d-flex justify-center align-center min-height-100vh">
           <v-card
-            class="mx-auto"
+            class="mx-auto card"
             prepend-icon="mdi-account-plus"
             subtitle="Create a new account"
             width="400"
@@ -25,7 +25,6 @@
 
             <v-card-text class="bg-surface-light pt-4">
               <v-form @submit.prevent="onSubmit" fast-fail>
-                <!-- Name field -->
                 <v-text-field
                   v-model="name"
                   label="Name"
@@ -33,7 +32,6 @@
                   outlined
                 ></v-text-field>
 
-                <!-- Email field -->
                 <v-text-field
                   v-model="email"
                   label="Email"
@@ -41,7 +39,6 @@
                   outlined
                 ></v-text-field>
 
-                <!-- Password field -->
                 <v-text-field
                   v-model="password"
                   label="Password"
@@ -50,7 +47,6 @@
                   outlined
                 ></v-text-field>
 
-                <!-- Password Confirmation field -->
                 <v-text-field
                   v-model="passwordConfirm"
                   label="Confirm Password"
@@ -59,7 +55,6 @@
                   outlined
                 ></v-text-field>
 
-                <!-- Submit button -->
                 <v-btn
                   class="mt-4"
                   type="submit"
@@ -71,7 +66,6 @@
               </v-form>
 
               <div class="d-flex justify-center mt-3">
-                <!-- Just text with a clickable link to the login page -->
                 <span
                   @click="router.push('/')"
                   :style="{ color: theme === 'light' ? '#616161' : '#B0B0B0' }"
@@ -130,5 +124,9 @@ function onClick() {
 <style scoped>
 .cursor-pointer {
   cursor: pointer;
+}
+
+.card {
+  margin-top: 100px; /* Adds margin to push the card down */
 }
 </style>

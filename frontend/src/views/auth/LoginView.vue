@@ -13,14 +13,14 @@
       <v-main>
         <v-container fluid class="d-flex justify-center align-center min-height-100vh">
           <v-card
-            class="mx-auto"
-            prepend-icon="mdi-account"
-            subtitle="Log in to your account"
+            class="mx-auto card"
+            prepend-icon="mdi-login"
+            subtitle="Log in to RealChat"
             width="400"
             elevation="10"
           >
             <template v-slot:title>
-              <span class="font-weight-black">Log In to RealChat</span>
+              <span class="font-weight-black">Log In</span>
             </template>
 
             <v-card-text class="bg-surface-light pt-4">
@@ -51,7 +51,6 @@
               </v-form>
 
               <div class="d-flex justify-center mt-3">
-                <!-- Just text with a clickable link to the registration page -->
                 <span
                   @click="router.push('/register')"
                   :style="{ color: theme === 'light' ? '#616161' : '#B0B0B0' }"
@@ -101,5 +100,9 @@ function onClick() {
 <style scoped>
 .cursor-pointer {
   cursor: pointer;
+}
+
+.card {
+  margin-top: 100px; /* Adds margin to push the card down */
 }
 </style>
