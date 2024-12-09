@@ -14,6 +14,7 @@
         placeholder="Email address"
         prepend-inner-icon="mdi-email-outline"
         variant="outlined"
+        v-model="email"
       ></v-text-field>
 
       <div class="text-subtitle-1 text-medium-emphasis">Contact</div>
@@ -23,6 +24,7 @@
         placeholder="Phone number"
         prepend-inner-icon="mdi-phone-outline"
         variant="outlined"
+        v-model="phone_number"
       ></v-text-field>
 
       <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
@@ -37,9 +39,12 @@
         prepend-inner-icon="mdi-lock-outline"
         variant="outlined"
         @click:append-inner="visible = !visible"
+        v-model="password"
       ></v-text-field>
 
-      <v-btn class="mb-8" color="blue" size="large" variant="tonal" block> Register </v-btn>
+      <v-btn class="mb-8" color="blue" size="large" variant="tonal" block @click="register">
+        Register
+      </v-btn>
 
       <v-card-text class="text-center">
         <RouterLink class="text-blue text-decoration-none" to="/">
@@ -51,7 +56,27 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import axios from 'axios'
+
+const email = ref('')
+const phone_number = ref('')
+const password = ref('')
+const visible = ref(false)
+
+const register = async () => {
+  try {
+    const response = await axios.post('/accounts/register/', {
+      email: email.value,
+      phone_number: phone_number.value,
+      password: password.value,
+    })
+    alert(response.data.message)
+  } catch (error) {
+    alert('Registration failed: ' + error.response.data)
+  }
+}
 </script>
 
 <style></style>
