@@ -63,6 +63,9 @@ MIDDLEWARE = [
 
     # Third party middleware
     'corsheaders.middleware.CorsMiddleware',
+
+    # Local middleware
+    #'realchat.middleware.EncryptionMiddleware',
 ]
 
 # CORS settings for allowing all origins to access the API endpoints
