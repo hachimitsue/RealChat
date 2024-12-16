@@ -42,7 +42,7 @@
 
       <v-card-text class="text-center">
         <RouterLink class="text-blue text-decoration-none" to="/">
-          Log in now <v-icon icon="mdi-chevron-right"></v-icon>
+          Login now <v-icon icon="mdi-chevron-right"></v-icon>
         </RouterLink>
       </v-card-text>
     </v-card>
