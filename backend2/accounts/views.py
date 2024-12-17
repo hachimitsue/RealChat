@@ -119,9 +119,6 @@ class SendMessageView(APIView):
         )
         logger.debug(f"Response: {response.json()}")
 
-        # Save the message to the database
-        Message.objects.create(sender=request.user, receiver=receiver, content=base64.urlsafe_b64encode(encrypted_message).decode('utf-8'))
-
         return Response(response.json())
 
 class ReceiveMessageView(APIView):
