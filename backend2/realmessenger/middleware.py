@@ -1,18 +1,26 @@
+import os
 import base64
+import logging
+
 from cryptography.fernet import Fernet
 from django.utils.deprecation import MiddlewareMixin
-import logging
-import os
 
+# Set up logging
 logger = logging.getLogger(__name__)
 
 class EncryptionMiddleware(MiddlewareMixin):
+    """
+    Middleware to handle encryption and decryption of request and response bodies.
+    """
     def __init__(self, get_response):
         self.get_response = get_response
         self.key = os.getenv('ENCRYPTION_KEY').encode()  # Load key from environment variable
         self.cipher_suite = Fernet(self.key)
 
     def process_request(self, request):
+        """
+        Decrypts the request body if the request method is POST and the path is '/accounts/messages/'.
+        """
         if request.method == 'POST' and request.path == '/accounts/messages/':
             try:
                 encrypted_body = request.body
@@ -23,6 +31,9 @@ class EncryptionMiddleware(MiddlewareMixin):
                 logger.error(f"Request body: {request.body}")
 
     def process_response(self, request, response):
+        """
+        Decrypts the response content if the request method is POST and the path is '/accounts/messages/'.
+        """
         if request.method == 'POST' and request.path == '/accounts/messages/':
             try:
                 encrypted_content = response.content
@@ -33,6 +44,9 @@ class EncryptionMiddleware(MiddlewareMixin):
         return response
 
     def ensure_padding(self, data):
+        """
+        Ensures the base64 encoded data has the correct padding.
+        """
         missing_padding = len(data) % 4
         if missing_padding:
             data += b'=' * (4 - missing_padding)

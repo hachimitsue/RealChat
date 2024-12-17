@@ -1,75 +1,97 @@
 import os
 import base64
-import requests  
+import requests
+import logging
 
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-
 from cryptography.fernet import Fernet
-
 from .serializers import UserSerializer, MessageSerializer
 from .models import Profile, Message
 
-import logging
-
+# Set up logging for the views module of the accounts app (logs to console)
 logger = logging.getLogger(__name__)
 
+# User Registration View
 @method_decorator(csrf_exempt, name='dispatch')
 class RegisterView(APIView):
+    """
+    Handles user registration.
+    """
     def post(self, request):
         serializer = UserSerializer(data=request.data)
+
+        # Validate the serializer and save the user if valid with a token response
         if serializer.is_valid():
             user = serializer.save()
             token, created = Token.objects.get_or_create(user=user)
             return Response({"message": "User registered successfully", "token": token.key}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# User Login View
 @method_decorator(csrf_exempt, name='dispatch')
 class LoginView(APIView):
+    """
+    Handles user login.
+    """
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
 
+        # Check if the username and password are provided
         if not username or not password:
             return Response({"message": "Username and password are required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Authenticate the user and return a token if successful
         user = authenticate(request, username=username, password=password)
+
+        # Check if the user is authenticated and return a token
         if user is not None:
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
             return Response({"message": "Login successful", "token": token.key}, status=status.HTTP_200_OK)
         else:
             return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+# Protected View Example
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def protected_view(request):
+    """
+    Example of a protected view that requires authentication.
+    """
     return Response({"message": "This is a protected view"}, status=200)
 
+# Message List View (Handles sending and retrieving messages)
 class MessageListView(APIView):
+    """
+    Handles sending and retrieving messages.
+    """
     permission_classes = [IsAuthenticated]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.key = os.getenv('ENCRYPTION_KEY').encode()  # Load key from environment variable
+        self.key = os.getenv('ENCRYPTION_KEY').encode() 
         self.cipher_suite = Fernet(self.key)
 
     def post(self, request):
+        """
+        Encrypts and sends a message.
+        """
         try:
             logger.debug(f"Original request data: {request.data}")
             encrypted_content = self.cipher_suite.encrypt(request.data['content'].encode())
             encoded_content = base64.urlsafe_b64encode(encrypted_content).decode('utf-8')
             request.data['content'] = encoded_content
-            request.data['sender'] = request.user.id  # Set the sender to the authenticated user
+            request.data['sender'] = request.user.id  
             logger.debug(f"Modified request data: {request.data}")
             serializer = MessageSerializer(data=request.data)
             if serializer.is_valid():
@@ -82,8 +104,12 @@ class MessageListView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
+        """
+        Retrieves messages for the authenticated user.
+        """
         try:
-            messages = Message.objects.all()
+            user = request.user
+            messages = Message.objects.filter(sender=user) | Message.objects.filter(receiver=user)
             serializer = MessageSerializer(messages, many=True)
             logger.debug(f"Serialized messages: {serializer.data}")
             return Response(serializer.data)
@@ -91,10 +117,17 @@ class MessageListView(APIView):
             logger.error(f"Error in get method: {e}")
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+# Send Message View (Handles sending messages to another backend)
 class SendMessageView(APIView):
+    """
+    Handles sending messages to another backend.
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        """
+        Encrypts and sends a message to another backend.
+        """
         message = request.data.get('message')
         receiver_username = request.data.get('receiver')
         key = os.getenv('ENCRYPTION_KEY').encode()
@@ -133,10 +166,17 @@ class SendMessageView(APIView):
 
         return Response(response_data)
 
+# Receive Message View (Handles receiving messages from another backend)
 class ReceiveMessageView(APIView):
+    """
+    Handles receiving messages from another backend.
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        """
+        Decrypts and saves a received message.
+        """
         encrypted_message = request.data.get('message')
         sender_username = request.data.get('sender')
         receiver_username = request.data.get('receiver')
