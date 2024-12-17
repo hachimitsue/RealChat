@@ -50,3 +50,8 @@ class MessageSerializer(serializers.ModelSerializer):
         if missing_padding:
             data += '=' * (4 - missing_padding)
         return data
+    def ensure_padding(self, data):
+        missing_padding = len(data) % 4
+        if missing_padding:
+            data += '=' * (4 - missing_padding)
+        return data
