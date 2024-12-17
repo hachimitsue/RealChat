@@ -38,6 +38,10 @@ VONAGE_BRAND_NAME=<your-vonage-brand-name>
 4. **Apply migrations**:
 
 ```python
+python manage.py makemigrations
+```
+
+```python
 python manage.py migrate
 ```
 

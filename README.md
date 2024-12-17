@@ -44,18 +44,6 @@ source ./venv/Scripts/activate  # On Windows
 pip install -r requirements.txt
 ```
 
-4. **Apply migrations**:
-
-```python
-python manage.py migrate
-```
-
-5. **Run the development server**:
-
-```python
-python manage.py runserver
-```
-
 ## Documentation
 
 For detailed documentation on each backend, please refer to the following links:
