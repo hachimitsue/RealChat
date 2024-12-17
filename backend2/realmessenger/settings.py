@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'accounts',
+    'sms.apps.SmsServiceConfig',
 ]
 
 REST_FRAMEWORK = {
