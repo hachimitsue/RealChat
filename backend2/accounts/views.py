@@ -89,3 +89,26 @@ class MessageListView(APIView):
         except Exception as e:
             logger.error(f"Error in get method: {e}")
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class SendMessageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        message = request.data.get('message')
+        key = os.getenv('ENCRYPTION_KEY').encode()
+        cipher = Fernet(key)
+        encrypted_message = cipher.encrypt(message.encode())
+        
+        # Send encrypted message to app1
+        response = requests.post('http://app1-url/api/receive-message/', data={'message': encrypted_message})
+        return Response(response.json())
+
+class ReceiveMessageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        encrypted_message = request.data.get('message')
+        key = os.getenv('ENCRYPTION_KEY').encode()
+        cipher = Fernet(key)
+        decrypted_message = cipher.decrypt(encrypted_message.encode()).decode()
+        return Response({'message': decrypted_message})
