@@ -8,5 +8,4 @@ urlpatterns = [
     path('messages/', MessageListView.as_view(), name='messages'),
     path('send-message/', SendMessageView.as_view(), name='send-message'),
     path('receive-message/', ReceiveMessageView.as_view(), name='receive-message'),
-     
 ]

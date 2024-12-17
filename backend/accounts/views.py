@@ -1,8 +1,9 @@
-# accounts/views.py
 import os
 import base64
+import requests  
 
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
@@ -95,20 +96,70 @@ class SendMessageView(APIView):
 
     def post(self, request):
         message = request.data.get('message')
+        receiver_username = request.data.get('receiver')
         key = os.getenv('ENCRYPTION_KEY').encode()
         cipher = Fernet(key)
         encrypted_message = cipher.encrypt(message.encode())
-        
+
+        # Get the token for the authenticated user
+        token = Token.objects.get(user=request.user).key
+        logger.debug(f"Sending token: {token}")
+
+        # Check if the receiver exists
+        try:
+            receiver = User.objects.get(username=receiver_username)
+        except User.DoesNotExist:
+            return Response({"error": "Receiver does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
         # Send encrypted message to backend2
-        response = requests.post('http://127.0.0.1:8080/accounts/receive-message/', data={'message': encrypted_message})
-        return Response(response.json())
+        response = requests.post(
+            'http://127.0.0.1:8080/accounts/receive-message/',
+            data={'message': base64.urlsafe_b64encode(encrypted_message).decode('utf-8'), 'sender': request.user.username, 'receiver': receiver_username},
+            headers={'Authorization': f'Token {token}'}
+        )
+
+        # Log the response content for debugging
+        logger.debug(f"Response status code: {response.status_code}")
+        logger.debug(f"Response content: {response.text}")
+
+        # Check if the response is valid JSON
+        try:
+            response_data = response.json()
+        except requests.exceptions.JSONDecodeError:
+            logger.error(f"Invalid JSON response: {response.text}")
+            return Response({"error": "Invalid response from backend2"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        logger.debug(f"Response: {response_data}")
+
+        # Save the message to the database
+        Message.objects.create(sender=request.user, receiver=receiver, content=base64.urlsafe_b64encode(encrypted_message).decode('utf-8'))
+
+        return Response(response_data)
 
 class ReceiveMessageView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         encrypted_message = request.data.get('message')
+        sender_username = request.data.get('sender')
+        receiver_username = request.data.get('receiver')
         key = os.getenv('ENCRYPTION_KEY').encode()
         cipher = Fernet(key)
-        decrypted_message = cipher.decrypt(encrypted_message.encode()).decode()
-        return Response({'message': decrypted_message})
+        decrypted_message = cipher.decrypt(base64.urlsafe_b64decode(encrypted_message)).decode()
+
+        # Check if the sender exists
+        try:
+            sender = User.objects.get(username=sender_username)
+        except User.DoesNotExist:
+            return Response({"error": "Sender does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if the receiver exists
+        try:
+            receiver = User.objects.get(username=receiver_username)
+        except User.DoesNotExist:
+            return Response({"error": "Receiver does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Save the message to the database
+        Message.objects.create(sender=sender, receiver=receiver, content=encrypted_message)
+
+        return Response({'message': decrypted_message}, status=status.HTTP_200_OK)

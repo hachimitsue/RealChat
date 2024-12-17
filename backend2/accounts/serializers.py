@@ -1,4 +1,3 @@
-# accounts/serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Profile, Message
@@ -45,11 +44,6 @@ class MessageSerializer(serializers.ModelSerializer):
             representation['content'] = f"Decryption error: {e}"
         return representation
 
-    def ensure_padding(self, data):
-        missing_padding = len(data) % 4
-        if missing_padding:
-            data += '=' * (4 - missing_padding)
-        return data
     def ensure_padding(self, data):
         missing_padding = len(data) % 4
         if missing_padding:
