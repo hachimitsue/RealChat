@@ -99,8 +99,8 @@ class SendMessageView(APIView):
         cipher = Fernet(key)
         encrypted_message = cipher.encrypt(message.encode())
         
-        # Send encrypted message to app1
-        response = requests.post('http://app1-url/api/receive-message/', data={'message': encrypted_message})
+        # Send encrypted message to backend2
+        response = requests.post('http://127.0.0.1:8080/accounts/receive-message/', data={'message': encrypted_message})
         return Response(response.json())
 
 class ReceiveMessageView(APIView):
