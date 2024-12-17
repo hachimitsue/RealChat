@@ -47,7 +47,9 @@ class EncryptionMiddleware(MiddlewareMixin):
         """
         Ensures the base64 encoded data has the correct padding.
         """
+        if isinstance(data, bytes):
+            data = data.decode('utf-8')
         missing_padding = len(data) % 4
         if missing_padding:
-            data += b'=' * (4 - missing_padding)
-        return data
+            data += '=' * (4 - missing_padding)
+        return data.encode('utf-8')
