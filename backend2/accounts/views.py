@@ -146,7 +146,7 @@ class SendMessageView(APIView):
 
         # Send encrypted message to backend2
         response = requests.post(
-            'http://127.0.0.1:8080/accounts/receive-message/',
+            'http://127.0.0.1:8000/accounts/receive-message/',
             data={'message': base64.urlsafe_b64encode(encrypted_message).decode('utf-8'), 'sender': request.user.username, 'receiver': receiver_username},
             headers={'Authorization': f'Token {token}'}
         )
