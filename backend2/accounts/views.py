@@ -144,7 +144,7 @@ class SendMessageView(APIView):
         except User.DoesNotExist:
             return Response({"error": "Receiver does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Send encrypted message to backend2
+        # Send encrypted message to backend
         response = requests.post(
             'http://127.0.0.1:8000/accounts/receive-message/',
             data={'message': base64.urlsafe_b64encode(encrypted_message).decode('utf-8'), 'sender': request.user.username, 'receiver': receiver_username},
@@ -160,7 +160,7 @@ class SendMessageView(APIView):
             response_data = response.json()
         except requests.exceptions.JSONDecodeError:
             logger.error(f"Invalid JSON response: {response.text}")
-            return Response({"error": "Invalid response from backend2"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Invalid response from backend"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         logger.debug(f"Response: {response_data}")
 
