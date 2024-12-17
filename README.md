@@ -1,58 +1,60 @@
-# RealChat SMS Application
+# RealChat
 
 ## Overview
 
-The `RealChat` application is a Django-based project for sending SMS notifications using the Vonage API. It operates as part of a final project that integrates multiple functionalities. This specific application focuses on sending SMS notifications after a user successfully logs in.
+The `RealChat` project consists of two Django REST Framework (DRF) applications that communicate securely by sending and receiving encrypted or hashed messages. This project focuses on building secure APIs using middleware for encryption/decryption, as well as integrating essential features.
 
 ## Key Features
 
-1. **User Signup with SMS Notification**:
-
-   - Automatically sends an SMS to the user's registered mobile number upon successful signup
-
-2. **SMS Notification**:
-   - Sends a confirmation SMS to users using the Vonage SMS API.
+1. **Secure Communication**:
+      - The applications communicate securely using encrypted or hashed messages.
+2. **User Signup with SMS Notification**:
+      - Automatically sends an SMS to the user's registered mobile number upon successful signup using the Vonage API.
+3. **Frontend Integration**:
+      - The frontend uses `axios` to send requests to the backend, ensuring smooth communication between the frontend and the backend for operations like login and SMS triggering.
 
 ## How It Works
 
 1. **User Registration and Login**:
-
-- Similar to OTP-based systems, where users receive an OTP upon registration, this application sends an SMS notification once a user successfully signed up.
-
-2. **SMS Notification**:
-
-- Upon successful sign up, the system triggers an SMS to the user's registered mobile number.
-
-3. **Frontend Integration**:
-
-- The frontend uses `axios` to send requests to the backend, ensuring smooth communication between the frontend and the backend for operations like login and SMS triggering.
+      - Similar to OTP-based systems, where users receive an OTP upon registration, this application sends an SMS notification once a user successfully signs up.
+2. **Secure API Communication**:
+      - The two DRF applications communicate securely by sending and receiving encrypted or hashed messages.
+3. **SMS Notification**:
+      - Upon successful sign up, the system triggers an SMS to the user's registered mobile number.
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd realchat
-   ```
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Configure Vonage credentials in your `.env` file:
-   ```
-   VONAGE_API_KEY=your_api_key
-   VONAGE_API_SECRET=your_api_secret
-   VONAGE_PHONE_NUMBER=your_vonage_phone_number
-   ```
-4. Apply migrations:
-   ```bash
-   python manage.py migrate
-   ```
-5. Run the development server:
-   ```bash
-   python manage.py runserver
-   ```
+1. **Clone the repository**:
+
+```bash
+git clone <repository-url>
+cd realchat
+```
+
+2. **Create and activate a virtual environment**:
+
+```bash
+python -m venv venv
+source ./venv/Scripts/activate  # On Windows
+```
+
+3. **Install dependencies**:
+
+```python
+pip install -r requirements.txt
+```
+
+## Documentation
+
+For detailed documentation on each backend, please refer to the following links:
+
+- [RealChat Backend Documentation](https://github.com/hachimitsue/RealChat/tree/main/realchat_backend#readme)
+- [RealMessenger Backend Documentation](https://github.com/hachimitsue/RealChat/tree/main/realmessenger_backend#readme)
 
 ## Future Improvements
 
-This project is designed to be combined with the final system
+This project has achieved the planned future improvements by integrating secure communication between two DRF applications. Further enhancements can include real-time features and additional security measures.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details.
