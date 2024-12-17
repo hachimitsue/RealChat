@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `RealMessenger backend` is a Django-based application designed to handle **user authentication**, **message encryption**, and **secure communication between two backend services**. This backend runs on port 8080 and is responsible for user registration, login, and message handling. The application leverages **Django REST Framework (DRF)** to build robust and secure APIs.
+The `RealMessenger backend` is a Django-based application designed to handle **user authentication**, **message encryption**, and **secure communication between two backend services**. This backend runs on **_port_** `8080` and is responsible for user registration, login, and message handling. The application leverages **Django REST Framework (DRF)** to build robust and secure APIs.
 
 ## Features
 
@@ -17,7 +17,7 @@ The `RealMessenger backend` is a Django-based application designed to handle **u
 
 ```bash
 python -m venv venv
-source ./venv/Scripts/activate  # On Windows use
+source ./venv/Scripts/activate  # On Windows
 ```
 
 2. **Install dependencies**:
@@ -141,7 +141,7 @@ DATABASE_PATH=<path-to-your-database-in-realchat-backend>
 - **Description**: Handles encryption and decryption of request and response bodies for secure communication.
 - **Methods**:
   - `process_request`: Decrypts the request body if the request method is `POST` and the path is `/accounts/messages/`.
-  - `process_response`: Decrypts the response content if the request method is `POST` and the path is `/accounts/messages/`.
+  - `process_response`: Decrypts the response content if the request method is `POST`bench/workbench.html) and the path is `/accounts/messages/`.
 
 ## Models
 

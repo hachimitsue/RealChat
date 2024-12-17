@@ -17,7 +17,7 @@ The `RealChat backend` is a Django-based application designed to handle **user a
 
 ```bash
 python -m venv venv
-source ./venv/Scripts/activate  # On Windows use
+source ./venv/Scripts/activate  # On Windows
 ```
 
 2. **Install dependencies**:
