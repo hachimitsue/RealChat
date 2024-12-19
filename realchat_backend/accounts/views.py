@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status, generics
+from rest_framework import status, generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -210,7 +210,25 @@ class ReceiveMessageView(APIView):
         Message.objects.create(sender=sender, receiver=receiver, content=encrypted_message)
 
         return Response({'message': decrypted_message}, status=status.HTTP_200_OK)
-    
+
+# Custom permission to only allow admin users to edit or delete   
+class IsAdminUserOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow admin users to edit or delete.
+    """
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user and request.user.is_staff
+
+# User Detail View
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint to retrieve, update, or delete a user.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdminUserOrReadOnly]
 
 # Protected View
 @api_view(['GET'])

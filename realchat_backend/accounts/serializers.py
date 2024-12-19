@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 
 # Serializer for User model
 class UserSerializer(serializers.ModelSerializer):
-    phone_number = serializers.CharField(write_only=True)
+    phone_number = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'phone_number']
+        fields = ['id', 'username', 'email', 'password', 'phone_number']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -28,6 +28,16 @@ class UserSerializer(serializers.ModelSerializer):
         if not Profile.objects.filter(user=user).exists():
             Profile.objects.create(user=user, phone_number=phone_number)
         return user
+    
+    
+    def update(self, instance, validated_data):
+        """
+        Update and return an existing `User` instance, given the validated data.
+        """
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.save()
+        return instance
 
 # Serializer for Message model
 class MessageSerializer(serializers.ModelSerializer):
