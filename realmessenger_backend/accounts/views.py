@@ -7,11 +7,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.decorators import api_view, permission_classes
 from cryptography.fernet import Fernet
 from .serializers import UserSerializer, MessageSerializer
@@ -61,24 +61,23 @@ class LoginView(APIView):
         else:
             return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
-# Protected View
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def protected_view(request):
+# User List View
+class UserListView(generics.ListAPIView):
     """
-    Example of a protected view that requires authentication.
+    API endpoint to list all users.
     """
-    return Response({"message": "This is a protected view"}, status=200)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
-# Check Admin View
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def check_admin(request):
+# Message List View (Handles retrieving all messages for admin users)
+class AllMessagesListView(generics.ListAPIView):
     """
-    Check if the authenticated user is an admin.
+    API endpoint to list all messages for admin users.
     """
-    is_admin = request.user.is_superuser
-    return Response({'is_admin': is_admin})
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
 
 # Message List View (Handles sending and retrieving messages)
@@ -155,9 +154,9 @@ class SendMessageView(APIView):
         except User.DoesNotExist:
             return Response({"error": "Receiver does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Send encrypted message to backend
+        # Send encrypted message to backend2
         response = requests.post(
-            'http://127.0.0.1:8000/accounts/receive-message/',
+            'http://127.0.0.1:8080/accounts/receive-message/',
             data={'message': base64.urlsafe_b64encode(encrypted_message).decode('utf-8'), 'sender': request.user.username, 'receiver': receiver_username},
             headers={'Authorization': f'Token {token}'}
         )
@@ -171,7 +170,7 @@ class SendMessageView(APIView):
             response_data = response.json()
         except requests.exceptions.JSONDecodeError:
             logger.error(f"Invalid JSON response: {response.text}")
-            return Response({"error": "Invalid response from backend"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Invalid response from backend2"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         logger.debug(f"Response: {response_data}")
 
@@ -211,3 +210,23 @@ class ReceiveMessageView(APIView):
         Message.objects.create(sender=sender, receiver=receiver, content=encrypted_message)
 
         return Response({'message': decrypted_message}, status=status.HTTP_200_OK)
+    
+
+# Protected View
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def protected_view(request):
+    """
+    Example of a protected view that requires authentication.
+    """
+    return Response({"message": "This is a protected view"}, status=200)
+
+# Check Admin View
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_admin(request):
+    """
+    Check if the authenticated user is an admin.
+    """
+    is_admin = request.user.is_superuser
+    return Response({'is_admin': is_admin})

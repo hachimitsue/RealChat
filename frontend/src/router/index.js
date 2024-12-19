@@ -1,6 +1,6 @@
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
-import Dashboard from '@/views/Dashboard.vue'
+import AdminDashboard from '@/views/AdminDashboard.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import axios from 'axios'
 
@@ -20,7 +20,7 @@ const router = createRouter({
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: Dashboard,
+      component: AdminDashboard,
       meta: { requiresAdmin: true },
     },
   ],
