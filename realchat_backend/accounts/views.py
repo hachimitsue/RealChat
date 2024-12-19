@@ -7,11 +7,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status
+from rest_framework import status, generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.decorators import api_view, permission_classes
 from cryptography.fernet import Fernet
 from .serializers import UserSerializer, MessageSerializer
@@ -61,14 +61,24 @@ class LoginView(APIView):
         else:
             return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
-# Protected View Example
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def protected_view(request):
+# User List View
+class UserListView(generics.ListAPIView):
     """
-    Example of a protected view that requires authentication.
+    API endpoint to list all users.
     """
-    return Response({"message": "This is a protected view"}, status=200)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+# Message List View (Handles retrieving all messages for admin users)
+class AllMessagesListView(generics.ListAPIView):
+    """
+    API endpoint to list all messages for admin users.
+    """
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
 
 # Message List View (Handles sending and retrieving messages)
 class MessageListView(APIView):
@@ -200,3 +210,41 @@ class ReceiveMessageView(APIView):
         Message.objects.create(sender=sender, receiver=receiver, content=encrypted_message)
 
         return Response({'message': decrypted_message}, status=status.HTTP_200_OK)
+
+# Custom permission to only allow admin users to edit or delete   
+class IsAdminUserOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow admin users to edit or delete.
+    """
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user and request.user.is_staff
+
+# User Detail View
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint to retrieve, update, or delete a user.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdminUserOrReadOnly]
+
+# Protected View
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def protected_view(request):
+    """
+    Example of a protected view that requires authentication.
+    """
+    return Response({"message": "This is a protected view"}, status=200)
+
+# Check Admin View
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_admin(request):
+    """
+    Check if the authenticated user is an admin.
+    """
+    is_admin = request.user.is_superuser
+    return Response({'is_admin': is_admin})

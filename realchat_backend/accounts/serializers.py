@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 
 # Serializer for User model
 class UserSerializer(serializers.ModelSerializer):
-    phone_number = serializers.CharField(write_only=True)
+    phone_number = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'phone_number']
+        fields = ['id', 'username', 'email', 'password', 'phone_number']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -28,12 +28,25 @@ class UserSerializer(serializers.ModelSerializer):
         if not Profile.objects.filter(user=user).exists():
             Profile.objects.create(user=user, phone_number=phone_number)
         return user
+    
+    
+    def update(self, instance, validated_data):
+        """
+        Update and return an existing `User` instance, given the validated data.
+        """
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.save()
+        return instance
 
 # Serializer for Message model
 class MessageSerializer(serializers.ModelSerializer):
+    sender_username = serializers.CharField(source='sender.username', read_only=True)
+    receiver_username = serializers.CharField(source='receiver.username', read_only=True)
+
     class Meta:
         model = Message
-        fields = ['id', 'sender', 'receiver', 'content', 'timestamp']
+        fields = ['id', 'sender', 'receiver', 'sender_username', 'receiver_username', 'content', 'timestamp']
 
     def to_representation(self, instance):
         """
