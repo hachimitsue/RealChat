@@ -13,20 +13,20 @@ The `RealMessenger backend` is a Django-based application designed to handle **u
 
 ## Installation
 
-1. **Create and activate a virtual environment**:
+1.**Create and activate a virtual environment**:
 
 ```bash
 python -m venv venv
 source ./venv/Scripts/activate  # On Windows
 ```
 
-2. **Install dependencies**:
+2.**Install dependencies**:
 
 ```python
 pip install -r requirements.txt
 ```
 
-3. **Configure environment variables**: Create a `.env` file in the **realmessenger_backend** directory and add the following:
+3.**Configure environment variables**: Create a `.env` file in the **realmessenger_backend** directory and add the following:
 
 ```bash
 ENCRYPTION_KEY=<your-encryption-key>
@@ -37,6 +37,12 @@ DATABASE_PATH=<path-to-your-database-in-realchat-backend>
 ```
 
 **Note**: The `DATABASE_PATH` should point to the shared database used by the `realchat` backend.
+
+5.**Run the development server**:
+
+```python
+python manage.py runserver 8080
+```
 
 ## API Endpoints
 
