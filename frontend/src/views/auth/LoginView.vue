@@ -8,6 +8,7 @@
         placeholder="Email address"
         prepend-inner-icon="mdi-email-outline"
         variant="outlined"
+        v-model="username"
       ></v-text-field>
 
       <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
@@ -31,6 +32,7 @@
         prepend-inner-icon="mdi-lock-outline"
         variant="outlined"
         @click:append-inner="visible = !visible"
+        v-model="password"
       ></v-text-field>
 
       <v-card class="mb-12" color="surface-variant" variant="tonal">
@@ -41,7 +43,9 @@
         </v-card-text>
       </v-card>
 
-      <v-btn class="mb-8" color="blue" size="large" variant="tonal" block> Log In </v-btn>
+      <v-btn class="mb-8" color="blue" size="large" variant="tonal" block @click="login">
+        Log In
+      </v-btn>
 
       <v-card-text class="text-center">
         <RouterLink class="text-blue text-decoration-none" to="/register">
@@ -53,7 +57,38 @@
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { ref } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+const username = ref('')
+const password = ref('')
+const visible = ref(false)
+const router = useRouter()
+
+const login = async () => {
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/accounts/login/', {
+      username: username.value,
+      password: password.value,
+    })
+    const token = response.data.token
+    localStorage.setItem('token', token)
+    const userResponse = await axios.get('http://127.0.0.1:8000/accounts/protected/', {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    })
+    if (userResponse.data.is_admin) {
+      router.push('/dashboard')
+    } else {
+      alert('Only admin can access the dashboard')
+    }
+  } catch (error) {
+    console.error(error)
+    alert('Login failed')
+  }
+}
 </script>
 
 <style>
