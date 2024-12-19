@@ -31,9 +31,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 # Serializer for Message model
 class MessageSerializer(serializers.ModelSerializer):
+    sender_username = serializers.CharField(source='sender.username', read_only=True)
+    receiver_username = serializers.CharField(source='receiver.username', read_only=True)
+
     class Meta:
         model = Message
-        fields = ['id', 'sender', 'receiver', 'content', 'timestamp']
+        fields = ['id', 'sender', 'receiver', 'sender_username', 'receiver_username', 'content', 'timestamp']
 
     def to_representation(self, instance):
         """

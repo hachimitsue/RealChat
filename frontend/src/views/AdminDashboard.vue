@@ -39,8 +39,8 @@ const userHeaders = [
 
 const messageHeaders = [
   { text: 'ID', value: 'id' },
-  { text: 'Sender', value: 'sender.username' },
-  { text: 'Receiver', value: 'receiver.username' },
+  { text: 'Sender', value: 'sender_username' },
+  { text: 'Receiver', value: 'receiver_username' },
   { text: 'Content', value: 'content' },
   { text: 'Timestamp', value: 'timestamp' },
 ]
