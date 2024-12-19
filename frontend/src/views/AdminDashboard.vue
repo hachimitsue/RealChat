@@ -1,8 +1,7 @@
 <template>
   <v-container class="bg-surface-variant mt-5">
     <div>
-      <div>
-        <h2>Users</h2>
+      <div class="mb-5">
         <v-data-table :headers="userHeaders" :items="users" class="elevation-1">
           <template v-slot:top>
             <v-toolbar flat>
@@ -11,8 +10,8 @@
           </template>
         </v-data-table>
       </div>
+
       <div>
-        <h2>Messages</h2>
         <v-data-table :headers="messageHeaders" :items="messages" class="elevation-1">
           <template v-slot:top>
             <v-toolbar flat>
