@@ -61,7 +61,7 @@ class LoginView(APIView):
         else:
             return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
-# Protected View Example
+# Protected View
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def protected_view(request):
@@ -69,6 +69,16 @@ def protected_view(request):
     Example of a protected view that requires authentication.
     """
     return Response({"message": "This is a protected view"}, status=200)
+
+# Check Admin View
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_admin(request):
+    """
+    Check if the authenticated user is an admin.
+    """
+    is_admin = request.user.is_superuser
+    return Response({'is_admin': is_admin})
 
 # Message List View (Handles sending and retrieving messages)
 class MessageListView(APIView):

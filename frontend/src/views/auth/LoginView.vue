@@ -74,7 +74,7 @@ const login = async () => {
     })
     const token = response.data.token
     localStorage.setItem('token', token)
-    const userResponse = await axios.get('http://127.0.0.1:8000/accounts/protected/', {
+    const userResponse = await axios.get('http://127.0.0.1:8000/accounts/check-admin/', {
       headers: {
         Authorization: `Token ${token}`,
       },
