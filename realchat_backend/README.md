@@ -45,7 +45,13 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-5.**Run the development server**:
+5.**Create a superuser**:
+
+```bash
+python manage.py createsuperuser
+```
+
+6.**Run the development server**:
 
 ```python
 python manage.py runserver 8000
