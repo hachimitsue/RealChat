@@ -13,20 +13,20 @@ The `RealChat backend` is a Django-based application designed to handle **user a
 
 ## Installation
 
-1.**Create and activate a virtual environment**:
+1. **Create and activate a virtual environment**:
 
 ```bash
 python -m venv venv
 source ./venv/Scripts/activate  # On Windows
 ```
 
-2.**Install dependencies**:
+2. **Install dependencies**:
 
 ```python
 pip install -r requirements.txt
 ```
 
-3.**Configure environment variables**: Create a `.env` file in the **realchat_backend** directory and add the following:
+3. **Configure environment variables**: Create a `.env` file in the **realchat_backend** directory and add the following:
 
 ```bash
 ENCRYPTION_KEY=<your-encryption-key>
@@ -35,7 +35,7 @@ VONAGE_API_SECRET=<your-vonage-api-secret>
 VONAGE_BRAND_NAME=<your-vonage-brand-name>
 ```
 
-4.**Apply migrations**:
+4. **Apply migrations**:
 
 ```python
 python manage.py makemigrations
@@ -45,7 +45,13 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-5.**Run the development server**:
+5. **Create a superuser**:
+
+```python
+python manage.py createsuperuser
+```
+
+6. **Run the development server**:
 
 ```python
 python manage.py runserver 8000
