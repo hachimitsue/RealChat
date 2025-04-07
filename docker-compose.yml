@@ -6,7 +6,6 @@ services:
     restart: always
     volumes:
       - ./realchat_backend:/app
-      - ./realchat_backend/staticfiles:/usr/share/nginx/html/static
       - sqlite_data:/app/db_data
       - static_volume:/app/staticfiles
     env_file:
@@ -14,6 +13,9 @@ services:
     environment:
       - DATABASE_PATH=/app/db_data/db.sqlite3
       - STATIC_ROOT=/app/staticfiles
+      - DJANGO_SETTINGS_MODULE=realchat.settings
+      - PYTHONUNBUFFERED=1
+      - ALLOWED_HOSTS=realchat_backend,localhost,127.0.0.1
     ports:
       - "8000:8000"
     networks:

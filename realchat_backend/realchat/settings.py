@@ -58,6 +58,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -74,6 +75,8 @@ MIDDLEWARE = [
 
 # CORS settings for allowing all origins to access the API endpoints
 CORS_ALLOW_ALL_ORIGINS = True
+
+WHITENOISE_MAX_AGE = 31536000 
 
 # CSRF settings for allowing CSRF cookie to be sent over HTTP for development purposes only
 APPEND_SLASH = False
@@ -141,6 +144,9 @@ USE_I18N = True
 USE_TZ = True
 
 
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1', 'http://localhost:80']
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -148,8 +154,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
 
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
 # Add this line to ensure Django finds the admin static files
 STATICFILES_DIRS = []
+
+FORCE_SCRIPT_NAME = ''
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
