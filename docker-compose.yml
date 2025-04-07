@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  realchat_backend:
+    build: ./realchat_backend
+    restart: always
+    volumes:
+      - ./realchat_backend:/app
+      - static_volume:/app/static
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  frontend:
+    build: ./frontend
+    restart: always
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - realchat_backend
+    networks:
+      - app_network
+
+  nginx:
+    build: ./nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/static
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - realchat_backend
+      - frontend
+    networks:
+      - app_network
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    networks:
+      - app_network
+
+volumes:
+  static_volume:
+  postgres_data:
+
+networks:
+  app_network:
