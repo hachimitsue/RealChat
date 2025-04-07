@@ -2,20 +2,18 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies (including gunicorn)
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
-# Create directory for SQLite database
+# Create directories for database and static files
 RUN mkdir -p /app/db_data
-
-# Create directory for static files
 RUN mkdir -p /app/staticfiles
 
-# Copy project
+# Copy the entire backend project
 COPY . /app/
 
-# Make entrypoint script executable
+# Ensure entrypoint script is executable
 RUN chmod +x /app/entrypoint.sh
 
 # Set environment variables
@@ -23,8 +21,6 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV STATIC_ROOT=/app/staticfiles
 
-# Expose port
 EXPOSE 8000
 
-# Run entrypoint script
 CMD ["/app/entrypoint.sh"]
