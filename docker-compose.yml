@@ -17,9 +17,9 @@ services:
     networks:
       - app_network
     command: >
-      sh -c "python manage.py collectstatic --noinput &&
-             python manage.py migrate &&
-             gunicorn realchat.wsgi:application --bind 0.0.0.0:8000"
+      sh -c "python manage.py collectstatic --noinput --clear &&
+            python manage.py migrate &&
+            gunicorn realchat.wsgi:application --bind 0.0.0.0:8000"
 
   frontend:
     build: ./frontend
@@ -49,8 +49,8 @@ services:
       - app_network
 
 volumes:
-  static_volume:
-  sqlite_data:
+  - static_volume:/app/staticfiles
+  - static_volume:/static
 
 networks:
   app_network:
