@@ -6,13 +6,20 @@ services:
     restart: always
     volumes:
       - ./realchat_backend:/app
-      - static_volume:/app/static
+      - sqlite_data:/app/db_data
+      - static_volume:/app/staticfiles
     env_file:
-      - ./.env
-    depends_on:
-      - db
+      - ./realchat_backend/.env
+    environment:
+      - DATABASE_PATH=/app/db_data/db.sqlite3
+    ports:
+      - "8000:8000"
     networks:
       - app_network
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             python manage.py migrate &&
+             gunicorn realchat.wsgi:application --bind 0.0.0.0:8000"
 
   frontend:
     build: ./frontend
@@ -20,6 +27,8 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    ports:
+      - "3000:3000"
     depends_on:
       - realchat_backend
     networks:
@@ -39,22 +48,9 @@ services:
     networks:
       - app_network
 
-  db:
-    image: postgres:13
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - ./.env
-    environment:
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_DB=${DB_NAME}
-    networks:
-      - app_network
-
 volumes:
   static_volume:
-  postgres_data:
+  sqlite_data:
 
 networks:
   app_network:

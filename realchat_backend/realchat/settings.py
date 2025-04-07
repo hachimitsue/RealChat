@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure--d5om7g3y52&t@fbo#gq_uvk5em()!yb)9jt+_gqbvcmn)d%w4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*'] 
 
 # Application definition
 INSTALLED_APPS = [
@@ -108,7 +108,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+ 
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
