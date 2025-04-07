@@ -6,6 +6,7 @@ services:
     restart: always
     volumes:
       - ./realchat_backend:/app
+      - ./realchat_backend/staticfiles:/usr/share/nginx/html/static
       - sqlite_data:/app/db_data
       - static_volume:/app/staticfiles
     env_file:
