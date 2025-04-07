@@ -8,11 +8,11 @@ services:
       - ./realchat_backend:/app
       - sqlite_data:/app/db_data
       - static_volume:/app/staticfiles
-      - static_volume:/static
     env_file:
       - ./realchat_backend/.env
     environment:
       - DATABASE_PATH=/app/db_data/db.sqlite3
+      - STATIC_ROOT=/app/staticfiles
     ports:
       - "8000:8000"
     networks:
